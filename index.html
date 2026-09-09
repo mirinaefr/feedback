@@ -80,9 +80,22 @@ details summary{cursor:pointer;font-size:11.5px;color:var(--ink2);font-weight:60
 .tool{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
 .tool[data-mark=x]{color:var(--red)}
 
-.sheet{width:210mm;min-height:297mm;background:#fff;padding:14mm 15mm 16mm;
+/* .sheet est une vraie <table> : c'est le seul mécanisme fiable, dans Chrome,
+   pour qu'un <thead>/<tfoot> se répète automatiquement sur chaque page
+   imprimée quand le contenu dépasse une page. Les resets ci-dessous
+   suppriment tout ce qui ferait ressembler ça à un tableau. */
+.sheet{width:210mm;min-height:297mm;background:#fff;
   box-shadow:0 1px 2px rgba(20,20,60,.06),0 12px 34px rgba(20,20,60,.13);
-  font-family:var(--doc);color:#1F2740;font-size:12pt;line-height:1.42}
+  font-family:var(--doc);color:#1F2740;font-size:12pt;line-height:1.42;
+  border-collapse:collapse;border-spacing:0}
+.sheet td{padding:0;border:0;vertical-align:top}
+/* border-collapse:collapse fait ignorer tout padding posé sur la balise
+   <table> elle-même, dans tous les navigateurs — pas seulement sur un
+   bord : purement et simplement ignoré. Les marges de page vivent donc
+   sur chaque cellule, pas sur la table. */
+.sheet thead td{padding:14mm 15mm 0}
+.sheet tbody td{padding:0 15mm}
+.sheet tfoot td{padding:0 15mm 16mm}
 .sheet[hidden]{display:none}
 
 .sh-head{display:flex;align-items:center;padding-bottom:4mm}
@@ -130,6 +143,9 @@ details summary{cursor:pointer;font-size:11.5px;color:var(--ink2);font-weight:60
 .tile ul{list-style:none;margin:0;padding:0}
 .tile li{margin-bottom:2mm}
 .tile li:last-child{margin-bottom:0}
+.tile .vword{display:block}
+.tile .vex{display:block;margin-top:.8mm;padding-left:14px;font-size:9pt;
+  font-style:italic;color:#7B84A0}
 .empty{color:#A2AABB;font-style:italic}
 
 /* chaque point de grammaire : la règle au-dessus, l'explication coréenne
@@ -178,7 +194,8 @@ details summary{cursor:pointer;font-size:11.5px;color:var(--ink2);font-weight:60
   .rail,.actions,.add,.stage-tip,.warn{display:none!important}
   .app{display:block}
   .stage{display:block;overflow:visible;padding:0;gap:0}
-  .sheet{width:auto;min-height:0;box-shadow:none;margin:0;padding:0}
+  .sheet{width:auto;min-height:0;box-shadow:none;margin:0}
+  .sheet thead td,.sheet tbody td,.sheet tfoot td{padding:0}
   .sheet + .sheet{break-before:page;page-break-before:always}
 
   /* chaque unité reste entière : le saut de page tombe entre deux tuiles ou
@@ -234,17 +251,12 @@ details summary{cursor:pointer;font-size:11.5px;color:var(--ink2);font-weight:60
         <div class="row">
           <label class="f"><i>Rythme</i>
             <select id="fRythme">
-              <option>주 1 회 – 20 분</option>
-              <option selected>주 1 회 – 30 분</option>
-              <option>주 1 회 – 40 분</option>
-              <option>주 1 회 – 50 분</option>
-              <option>주 1 회 – 60 분</option>
-              <option>주 2 회 – 20 분</option>
-              <option>주 2 회 – 30 분</option>
-              <option>주 2 회 – 40 분</option>
-              <option>주 2 회 – 50 분</option>
-              <option>격주 1 회 – 30 분</option>
-              <option>격주 1 회 – 50 분</option>
+              <option>주 1회 15분</option>
+              <option>주 2회 15분</option>
+              <option>주 3회 15분</option>
+              <option selected>주 1회 30분</option>
+              <option>주 2회 30분</option>
+              <option>주 3회 30분</option>
               <option value="__autre__">Autre…</option>
             </select></label>
           <label class="f" style="flex:.6"><i>Jour</i>
@@ -343,111 +355,124 @@ sur la télévision
       <button class="tool" data-mark="x">rouge</button>
       <button class="tool" data-mark="b">gras</button></p>
 
-    <article class="sheet" id="page1">
-      <header class="sh-head">
-        <div class="logo"></div>
-        <div class="meta"><a href="https://callmeparis.com">callmeparis.com</a>
-          <em>전화불어 불어과외 DELF-DALF 전문</em></div>
-      </header>
-      <div class="brandrule"></div>
+    <table class="sheet" id="page1">
+      <thead><tr><td>
+        <header class="sh-head">
+          <div class="logo"></div>
+          <div class="meta"><a href="https://callmeparis.com">callmeparis.com</a>
+            <em>전화불어 불어과외 DELF-DALF 전문</em></div>
+        </header>
+        <div class="brandrule"></div>
+      </td></tr></thead>
 
-      <h1>FICHE DE SUIVI DE COURS</h1>
-      <div class="titlebar"></div>
+      <tfoot><tr><td>
+        <footer class="ftr">
+          <p class="ftr-offers">
+            <a href="https://echo.callmeparis.com/" target="_blank" rel="noopener">Écho</a> 프랑스어 발음 비대면 코칭
+            <span class="ftr-dot">·</span>
+            <a href="https://callmeparis.liveklass.com/" target="_blank" rel="noopener">Solo</a> 프랑스어 온라인 PDF·영상 강의
+            <span class="ftr-dot">·</span>
+            <a href="https://pro.callmeparis.com/" target="_blank" rel="noopener">Pro</a> 기업을 위한 맞춤 프랑스어 교육
+          </p>
+          <div class="ftr-line">
+            <span>미리내프랑스 (Mirinae France) · 사업자등록번호 170-09-01295</span>
+            <span>callmeparis.com · callmepariskr@gmail.com</span>
+          </div>
+        </footer>
+      </td></tr></tfoot>
 
-      <div class="mpanel">
-        <div><span class="lab">Date</span><span class="val" id="oDate">—</span></div>
-        <div><span class="lab">Élève</span><span class="val" id="oName">—</span></div>
-        <div><span class="lab">Niveau</span><span class="val" id="oLevel">B1</span></div>
-        <div><span class="lab">Type</span><span class="val" id="oType">일반 회화</span></div>
-        <div><span class="lab">Cours</span><span class="val" id="oRythme"></span></div>
-        <div><span class="lab">Jour</span><span class="val" id="oDay"></span></div>
-      </div>
+      <tbody><tr><td>
+        <h1>FICHE DE SUIVI DE COURS</h1>
+        <div class="titlebar"></div>
 
-      <div class="subject">
-        <span class="lab">Sujet de la séance</span>
-        <span class="val" id="oSubject">—</span>
-        <span class="src" id="oSource" hidden></span>
-      </div>
-
-      <div class="tiles">
-        <div class="tile wide">
-          <div class="sec">✏️ Corrections</div>
-          <div id="oCorr" contenteditable="true"></div>
-          <button class="add" data-add="corr">+ une correction</button>
+        <div class="mpanel">
+          <div><span class="lab">Date</span><span class="val" id="oDate">—</span></div>
+          <div><span class="lab">Élève</span><span class="val" id="oName">—</span></div>
+          <div><span class="lab">Niveau</span><span class="val" id="oLevel">B1</span></div>
+          <div><span class="lab">Type</span><span class="val" id="oType">일반 회화</span></div>
+          <div><span class="lab">Cours</span><span class="val" id="oRythme"></span></div>
+          <div><span class="lab">Jour</span><span class="val" id="oDay"></span></div>
         </div>
 
-        <div class="tile compact">
-          <div class="sec">🏷️ Noms</div>
-          <ul id="vNoms" contenteditable="true"></ul>
-          <button class="add" data-add="vNoms">+</button>
+        <div class="subject">
+          <span class="lab">Sujet de la séance</span>
+          <span class="val" id="oSubject">—</span>
+          <span class="src" id="oSource" hidden></span>
         </div>
 
-        <div class="tile compact">
-          <div class="sec">📐 Adjectifs</div>
-          <ul id="vAdj" contenteditable="true"></ul>
-          <button class="add" data-add="vAdj">+</button>
-        </div>
+        <div class="tiles">
+          <div class="tile wide">
+            <div class="sec">✏️ Corrections</div>
+            <div id="oCorr" contenteditable="true"></div>
+            <button class="add" data-add="corr">+ une correction</button>
+          </div>
 
-        <div class="tile compact">
-          <div class="sec" id="oAdvBar">🧭 Adverbes / Prépositions / Etc.</div>
-          <ul id="vAdv" contenteditable="true"></ul>
-          <button class="add" data-add="vAdv">+</button>
-        </div>
+          <div class="tile compact">
+            <div class="sec">🏷️ Noms</div>
+            <ul id="vNoms" contenteditable="true"></ul>
+            <button class="add" data-add="vNoms">+</button>
+          </div>
 
-        <div class="tile compact">
-          <div class="sec">🔗 Verbes / Expressions</div>
-          <ul id="vVerb" contenteditable="true"></ul>
-          <button class="add" data-add="vVerb">+</button>
-        </div>
+          <div class="tile compact">
+            <div class="sec">📐 Adjectifs</div>
+            <ul id="vAdj" contenteditable="true"></ul>
+            <button class="add" data-add="vAdj">+</button>
+          </div>
 
-        <div class="tile wide gram" id="gramBlock" hidden>
-          <div class="sec">📌 Grammaire / 문법 설명</div>
-          <div id="oGram" contenteditable="true"></div>
-          <button class="add" data-add="gram">+ un point de grammaire</button>
-        </div>
-      </div>
+          <div class="tile compact">
+            <div class="sec" id="oAdvBar">🧭 Adverbes / Prépositions / Etc.</div>
+            <ul id="vAdv" contenteditable="true"></ul>
+            <button class="add" data-add="vAdv">+</button>
+          </div>
 
-      <footer class="ftr">
-        <p class="ftr-offers">
-          <a href="https://echo.callmeparis.com/" target="_blank" rel="noopener">Écho</a> 프랑스어 발음 비대면 코칭
-          <span class="ftr-dot">·</span>
-          <a href="https://callmeparis.liveklass.com/" target="_blank" rel="noopener">Solo</a> 프랑스어 온라인 PDF·영상 강의
-          <span class="ftr-dot">·</span>
-          <a href="https://pro.callmeparis.com/" target="_blank" rel="noopener">Pro</a> 기업을 위한 맞춤 프랑스어 교육
-        </p>
-        <div class="ftr-line">
-          <span>미리내프랑스 (Mirinae France) · 사업자등록번호 170-09-01295</span>
-          <span>callmeparis.com · callmepariskr@gmail.com</span>
-        </div>
-      </footer>
-    </article>
+          <div class="tile compact">
+            <div class="sec">🔗 Verbes / Expressions</div>
+            <ul id="vVerb" contenteditable="true"></ul>
+            <button class="add" data-add="vVerb">+</button>
+          </div>
 
-    <article class="sheet" id="page2" hidden>
-      <header class="sh-head">
-        <div class="logo"></div>
-        <div class="meta"><a href="https://callmeparis.com">callmeparis.com</a>
-          <em>전화불어 불어과외 DELF-DALF 전문</em></div>
-      </header>
-      <div class="brandrule"></div>
-      <div class="digest">
-        <div class="sec">📰 Les points essentiels de l'article</div>
-        <div id="oPoints" contenteditable="true"></div>
-      </div>
-
-      <footer class="ftr">
-        <p class="ftr-offers">
-          <a href="https://echo.callmeparis.com/" target="_blank" rel="noopener">Écho</a> 프랑스어 발음 비대면 코칭
-          <span class="ftr-dot">·</span>
-          <a href="https://callmeparis.liveklass.com/" target="_blank" rel="noopener">Solo</a> 프랑스어 온라인 PDF·영상 강의
-          <span class="ftr-dot">·</span>
-          <a href="https://pro.callmeparis.com/" target="_blank" rel="noopener">Pro</a> 기업을 위한 맞춤 프랑스어 교육
-        </p>
-        <div class="ftr-line">
-          <span>미리내프랑스 (Mirinae France) · 사업자등록번호 170-09-01295</span>
-          <span>callmeparis.com · callmepariskr@gmail.com</span>
+          <div class="tile wide gram" id="gramBlock" hidden>
+            <div class="sec">📌 Grammaire / 문법 설명</div>
+            <div id="oGram" contenteditable="true"></div>
+            <button class="add" data-add="gram">+ un point de grammaire</button>
+          </div>
         </div>
-      </footer>
-    </article>
+      </td></tr></tbody>
+    </table>
+
+    <table class="sheet" id="page2" hidden>
+      <thead><tr><td>
+        <header class="sh-head">
+          <div class="logo"></div>
+          <div class="meta"><a href="https://callmeparis.com">callmeparis.com</a>
+            <em>전화불어 불어과외 DELF-DALF 전문</em></div>
+        </header>
+        <div class="brandrule"></div>
+      </td></tr></thead>
+
+      <tfoot><tr><td>
+        <footer class="ftr">
+          <p class="ftr-offers">
+            <a href="https://echo.callmeparis.com/" target="_blank" rel="noopener">Écho</a> 프랑스어 발음 비대면 코칭
+            <span class="ftr-dot">·</span>
+            <a href="https://callmeparis.liveklass.com/" target="_blank" rel="noopener">Solo</a> 프랑스어 온라인 PDF·영상 강의
+            <span class="ftr-dot">·</span>
+            <a href="https://pro.callmeparis.com/" target="_blank" rel="noopener">Pro</a> 기업을 위한 맞춤 프랑스어 교육
+          </p>
+          <div class="ftr-line">
+            <span>미리내프랑스 (Mirinae France) · 사업자등록번호 170-09-01295</span>
+            <span>callmeparis.com · callmepariskr@gmail.com</span>
+          </div>
+        </footer>
+      </td></tr></tfoot>
+
+      <tbody><tr><td>
+        <div class="digest">
+          <div class="sec">📰 Les points essentiels de l'article</div>
+          <div id="oPoints" contenteditable="true"></div>
+        </div>
+      </td></tr></tbody>
+    </table>
   </main>
 </div>
 
@@ -465,6 +490,16 @@ function mergeVocInto(v, extra){
     if(!v[c].some(x => flatVoc(x) === flatVoc(it))) v[c].push(it);
   }));
   return v;
+}
+/* A1/A2 : noms/adjectifs/verbes veulent une traduction coréenne (repérée par
+   « — »), adverbes/verbes veulent une phrase d'exemple (repérée par « | »).
+   Sert à savoir si l'IA a du travail d'enrichissement à faire, en plus
+   d'une éventuelle correction ou d'un classement de mots. */
+function needsEnrichment(v){
+  const noTr = it => !/ — /.test(String(it).split('|')[0]);
+  const noEx = it => !String(it).includes('|');
+  return ['noms','adjectifs','verbes'].some(c => (v[c]||[]).some(noTr))
+      || ['adverbes','verbes'].some(c => (v[c]||[]).some(noEx));
 }
 /* rythme et jour : select avec valeurs courantes + repli "Autre" en texte libre */
 function fieldVal(select, other){ return select.value === '__autre__' ? (other.value||'').trim() : select.value; }
@@ -572,8 +607,18 @@ function readNotes(txt){
     }
     const v = l.match(/^\+\s*(n|adj|adv|v)?\s*[:.]?\s+(.+)$/i) || l.match(/^\+(n|adj|adv|v)\s*[:.]?\s*(.+)$/i);
     if(v){
-      const item = v[2].trim();
-      if(v[1]) out.vocabulaire[({n:'noms',adj:'adjectifs',adv:'adverbes',v:'verbes'})[v[1].toLowerCase()]].push('**'+item+'**');
+      /* +cat mot [= traduction] [| phrase d'exemple] — la traduction et
+         l'exemple sont facultatifs, à taper à la main si on veut éviter
+         l'IA ; sinon ils seront complétés automatiquement pour A1/A2. */
+      let item = v[2].trim(), example = '';
+      const bar = item.indexOf('|');
+      if(bar >= 0){ example = item.slice(bar+1).trim(); item = item.slice(0,bar).trim(); }
+      let word = item, tr = '';
+      const eq = item.indexOf('=');
+      if(eq >= 0){ tr = item.slice(eq+1).trim(); word = item.slice(0,eq).trim(); }
+      let formatted = '**'+word+'**' + (tr ? ' — '+tr : '');
+      if(example) formatted += '|'+example;
+      if(v[1]) out.vocabulaire[({n:'noms',adj:'adjectifs',adv:'adverbes',v:'verbes'})[v[1].toLowerCase()]].push(formatted);
       else out.aClasser.push(item);
       return;
     }
@@ -603,7 +648,12 @@ function renderCorrections(list){
     : '<p class="empty">Aucune correction pour l\'instant.</p>';
 }
 function renderVoc(id, items){
-  $('#'+id).innerHTML = (items||[]).map(v => '<li>➡ '+fmt(v,'b')+'</li>').join('');
+  $('#'+id).innerHTML = (items||[]).map(v => {
+    const [main, ex] = String(v).split('|');
+    let html = '<li><span class="vword">➡ '+fmt(main.trim(),'b')+'</span>';
+    if(ex && ex.trim()) html += '<span class="vex">'+esc(ex.trim())+'</span>';
+    return html + '</li>';
+  }).join('');
 }
 function accentKo(text){
   /* les exemples français cités entre guillemets « » ressortent en gras et en
@@ -703,8 +753,9 @@ function toJSON(t){
   if(a>=0 && b>a) t = t.slice(a,b+1);
   return JSON.parse(t);
 }
-function promptFiche(phrases, aClasser, aExpliquer){
+function promptFiche(phrases, aClasser, aExpliquer, voc){
   const deb = DEBUTANT();
+  const lvl = $('#fLevel').value;
   const blocGram = deb ? `
 
 POINTS DE GRAMMAIRE À EXPLIQUER :
@@ -713,9 +764,31 @@ ${aExpliquer.length ? aExpliquer.join('\n') : '(aucun imposé : choisis-les toi-
     ? `6. "grammaire" : 2 à 4 points, pas plus, tirés des erreurs ci-dessus. "point" nomme la règle en français, par exemple « le pronom relatif dont ». "explication" est rédigée ENTIÈREMENT EN CORÉEN, une ou deux phrases simples et concrètes, avec l'exemple français entre guillemets à l'intérieur. L'élève est débutant : c'est le coréen qui porte toute l'explication.
 7. Aucun mot de coréen dans "erreur" ni dans "correction". Ces deux champs restent intégralement en français, sans traduction, sans glose, sans parenthèse en coréen.`
     : `6. "grammaire" reste un tableau vide.`;
+
+  const vs = c => (voc && voc[c] && voc[c].length) ? voc[c].join('\n') : '(aucun)';
+  const blocVoc = deb ? `
+
+VOCABULAIRE DÉJÀ SAISI, à conserver et compléter sans rien perdre :
+Noms : ${vs('noms')}
+Adjectifs : ${vs('adjectifs')}
+Adverbes / prépositions : ${vs('adverbes')}
+Verbes / expressions : ${vs('verbes')}` : '';
+
+  const regleVoc = deb
+    ? `4. L'élève est débutant (${lvl}). Classe les mots à classer dans la bonne catégorie, puis renvoie aussi, complétés de la même façon, tous les mots du bloc « VOCABULAIRE DÉJÀ SAISI » ci-dessus — sans en perdre un seul, sans doublon, et sans retoucher un mot qui a déjà tout ce qu'il faut :
+   - "noms", "adjectifs" et "verbes" : ajoute la traduction coréenne après un tiret cadratin. « la **Mongolie** — 몽골 », « être **élevé** — (가격이) 높다 », « **avoir tendance à** + infinitif — ~하는 경향이 있다 ». Un mot qui a déjà un « — » garde sa traduction telle quelle.
+   - "adverbes" (prépositions incluses) : jamais de traduction.
+   - "adverbes" et "verbes" seulement : ajoute une phrase d'exemple simple et courte, niveau ${lvl}, après une barre verticale |, à la toute fin. « **à** la télévision|Je regarde les infos à la télévision. » Un mot qui a déjà un « | » garde son exemple tel quel.
+   - "noms" et "adjectifs" n'ont jamais d'exemple, seulement la traduction.`
+    : `4. "vocabulaire" classe les mots à classer en noms / adjectifs / adverbes / verbes, et y ajoute les points de langue des corrections qui méritent d'être retenus, sans doublon. Mets le mot-clé entre ** :
+   - noms : « la **Mongolie** », « un **souvenir** »
+   - adjectifs : « être **élevé** »
+   - adverbes et prépositions : « **à** la télévision »
+   - verbes et expressions : « **avoir tendance à** + infinitif », « **être accro à** + nom »`;
+
   return `Tu assistes un professeur de FLE natif parisien qui donne des cours de français par téléphone à des apprenants coréens adultes. Il relève au vol les phrases fautives de son élève ; tu écris les corrections de sa fiche de suivi.
 
-Élève : ${$('#fName').value||'non précisé'} — niveau ${$('#fLevel').value}
+Élève : ${$('#fName').value||'non précisé'} — niveau ${lvl}
 Type de cours : ${courseType}
 Sujet de la séance : ${$('#fSubject').value||'non précisé'}
 
@@ -723,17 +796,13 @@ PHRASES FAUTIVES, dans l'ordre, une par ligne :
 ${phrases.map((p,i)=>(i+1)+'. '+p).join('\n')}
 
 MOTS À CLASSER :
-${aClasser.length ? aClasser.join('\n') : '(aucun)'}${blocGram}
+${aClasser.length ? aClasser.join('\n') : '(aucun)'}${blocVoc}${blocGram}
 
 Règles :
 1. "corrections" contient exactement ${phrases.length} objets, dans le même ordre que les phrases ci-dessus.
 2. "erreur" reprend la phrase fautive telle quelle. Si ce n'est qu'un fragment, écris-le précédé ou suivi de « (…) ». Exemple : « (…) un prix très grand. »
 3. "correction" donne la version correcte la plus proche de l'intention de l'élève. Ne corrige que ce qui est fautif, ne reformule pas le reste, ne change pas le registre.
-4. "vocabulaire" classe les mots à classer en noms / adjectifs / adverbes / verbes, et y ajoute les points de langue des corrections qui méritent d'être retenus, sans doublon. Mets le mot-clé entre ** :
-   - noms : « la **Mongolie** », « un **souvenir** »
-   - adjectifs : « être **élevé** »
-   - adverbes et prépositions : « **à** la télévision »
-   - verbes et expressions : « **avoir tendance à** + infinitif », « **être accro à** + nom »
+${regleVoc}
 5. Français de France, typographie française. N'invente rien qui ne soit pas dans les phrases.
 ${regleGram}
 
@@ -768,15 +837,18 @@ $('#gen').addEventListener('click', async () => {
   if(!raw){ status('#st1','Écris d\'abord tes notes de cours.','err'); return; }
   const local = readNotes(raw);
   mergeVocInto(local.vocabulaire, readNotes($('#fExtraVoc').value).vocabulaire);
+  const enrichir = DEBUTANT() && needsEnrichment(local.vocabulaire);
 
   if(!local.aCorriger.length && !local.aClasser.length && !local.aExpliquer.length
-     && !(DEBUTANT() && !local.grammaire.length)){
+     && !(DEBUTANT() && !local.grammaire.length) && !enrichir){
     applyFiche(local); status('#st1','Fiche rédigée.','ok'); saveArchive(local); return;
   }
   const btn = $('#gen'); btn.disabled = true;
-  status('#st1','Correction de ' + local.aCorriger.length + ' phrase(s)…','work');
+  status('#st1', local.aCorriger.length
+    ? 'Correction de ' + local.aCorriger.length + ' phrase(s)…'
+    : 'Traduction et exemples pour le niveau ' + $('#fLevel').value + '…', 'work');
   try{
-    const d = toJSON(await ask(promptFiche(local.aCorriger, local.aClasser, local.aExpliquer), false));
+    const d = toJSON(await ask(promptFiche(local.aCorriger, local.aClasser, local.aExpliquer, local.vocabulaire), false));
     const got = d.corrections || [];
     let k = 0;
     const corrections = local.corrections.map(c => {
@@ -784,7 +856,20 @@ $('#gen').addEventListener('click', async () => {
       const g = got[k++] || {};
       return { erreur: g.erreur || c.erreur, correction: g.correction || '' };
     });
-    const v = mergeVocInto(local.vocabulaire, d.vocabulaire || {});
+    if(DEBUTANT()){
+      /* à ce niveau, l'IA renvoie l'état complet et enrichi de chaque
+         catégorie ; on ne remplace que si elle a bien tout renvoyé, sinon
+         on se contente d'ajouter ce qu'elle propose, pour ne rien perdre */
+      const dv = d.vocabulaire || {};
+      Object.keys(CATS).forEach(c => {
+        const got = dv[c];
+        if(Array.isArray(got) && got.length >= (local.vocabulaire[c]||[]).length) local.vocabulaire[c] = got;
+        else if(Array.isArray(got)) mergeVocInto(local.vocabulaire, {[c]: got});
+      });
+    } else {
+      mergeVocInto(local.vocabulaire, d.vocabulaire || {});
+    }
+    const v = local.vocabulaire;
     const gram = local.grammaire.slice();
     if(DEBUTANT()) (d.grammaire||[]).forEach(g => {
       if(g && g.point && !gram.some(x => x.point.toLowerCase() === String(g.point).toLowerCase()))
@@ -877,7 +962,7 @@ $('#chips').addEventListener('click', async e => {
   const chip = e.target.closest('.chip'); if(!chip) return;
   const s = students[+chip.dataset.i];
   $('#fName').value=s.name; $('#fLevel').value=s.level; $('#fMail').value=s.mail||'';
-  setField($('#fRythme'), $('#fRythmeAutre'), $('#rythmeAutreRow'), s.rythme||'주 1 회 – 30 분');
+  setField($('#fRythme'), $('#fRythmeAutre'), $('#rythmeAutreRow'), s.rythme||'주 1회 30분');
   setField($('#fDay'), $('#fDayAutre'), $('#dayAutreRow'), s.day||'월요일');
   $('#fNo').value = s.no ? (Number(s.no)+1) : '';
   if(s.type){ courseType=s.type;
@@ -962,10 +1047,17 @@ function mailTexte(){
 
 $('#expVoc').addEventListener('click', () => {
   const who = $('#fName').value.trim();
-  const rows = [['date','élève','cours','catégorie','item']];
+  const rows = [['date','élève','cours','catégorie','mot','traduction','exemple']];
   archive.filter(f=>!who||f.name===who).forEach(f => {
     const v = (f.data&&f.data.vocabulaire)||{};
-    Object.keys(v).forEach(k => (v[k]||[]).forEach(it => rows.push([f.date,f.name,f.no,k,String(it).replace(/\*\*/g,'')])));
+    Object.keys(v).forEach(k => (v[k]||[]).forEach(it => {
+      const [main, ex=''] = String(it).split('|');
+      const clean = main.replace(/\*\*/g,'').trim();
+      const dash = clean.indexOf(' — ');
+      const word = dash >= 0 ? clean.slice(0,dash).trim() : clean;
+      const tr = dash >= 0 ? clean.slice(dash+3).trim() : '';
+      rows.push([f.date,f.name,f.no,k,word,tr,ex.trim()]);
+    }));
   });
   if(rows.length===1){ status('#st1','Rien à exporter pour l\'instant.','err'); return; }
   const csv = '\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
